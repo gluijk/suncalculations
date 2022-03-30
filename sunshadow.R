@@ -24,13 +24,13 @@ NSOLSINV=as.integer(rownames(solsinv))  # row 355
 
 
 
-# BASIC PLOTS
+# BASIC AZIMUTH/ELEVATION PLOTS
 
 # Plot curves for days 21 (21-jun=summer solstice, 21-dec=winter solstice)
 elevazimdays21=elevazim[substr(elevazim$DIA,1,2)=='21',]
 elevazimdays21=elevazimdays21[,2:ncol(elevazimdays21)]  # keep azim/elev data
 
-# CARTESIAN PLOT
+# CARTESIAN plot
 # We define an empty polar plot and its layout
 fig=plot_ly(type='scatter', mode='lines')
 fig=fig %>% layout(
@@ -58,12 +58,12 @@ for (i in 1:nrow(elevazimdays21)) {
 fig
 
 
-# POLAR PLOT
+# POLAR plot
 # We define an empty polar plot and its layout
 fig=plot_ly(type='scatterpolar', mode='lines')
 fig=fig %>% layout(
     polar=list(
-        title='Elevation and Azimuth every 21th of the month',
+        title='Azimuth and elevation on 21th of the month',
         radialaxis=list(
             angle=90,
             range=c(0, 90),
@@ -100,55 +100,46 @@ elev=elevazimdata[col(elevazimdata)%%2==1]
 dim(azim)=c(nrow(elevazimdata), ncol(elevazimdata)/2) # restitute matrix format
 dim(elev)=dim(azim)
 
-
 # Max sunrise/sunset angle differences
 azimsolsver=azim[NSOLSVER,]
 azimsolsinv=azim[NSOLSINV,]
 elevsolsver=elev[NSOLSVER,]
 elevsolsinv=elev[NSOLSINV,]
 
-# Plot Azimuth and Elevation vs hour
+# Max Azimuth differences
+print(paste0("Max difference in sunrise angle: ",
+             min(azimsolsinv[!is.na(azimsolsinv)])-min(azimsolsver[!is.na(azimsolsver)]),
+             " deg"))
 
-# Summer solstice
+print(paste0("Max difference in sunset angle: ",
+             max(azimsolsver[!is.na(azimsolsver)])-max(azimsolsinv[!is.na(azimsolsinv)]),
+             " deg"))
+
+
+# Plot Azimuth and Elevation vs hour
 time=seq(0,24,length.out=289)[1:288]
 maxelev=max(elevsolsver[!is.na(elevsolsver)])
 hmaxelev=time[which(elevsolsver==maxelev)]
-plot(time, azimsolsver, ylim=c(0,315), type='l',
-     main='Summer solstice Azimuth / Elevation',
-     xlab=paste0('Hour (max Elev=',maxelev,'deg at ',hmaxelev,'h)'),
-     ylab='Azimuth (deg) / Elevation (deg)',
-     col='red', xaxt='n', yaxt='n')
-lines(time, elevsolsver, type='l', col='blue')
+for (i in 1:nrow(elevazimdays21)) {
+    day21=elevazimdays21[i,]  # day 21 of the month
+    azim=day21[col(day21)%%2==0]
+    elev=day21[col(day21)%%2==1]
+    if (i==1) {
+        plot(time, azim, ylim=c(0,315), type='l',
+             main='Azimuth and elevation on 21th of the month vs hour',
+             xlab=paste0('Hour (max Elev=',maxelev,'deg at ',hmaxelev,'h)'),
+             ylab='Azimuth (deg) / Elevation (deg)',
+             col=rgb(1,0,0,0.5), xaxt='n', yaxt='n')        
+    } else {
+        lines(time, azim, type='l', col=rgb(1,0,0,0.5)) 
+    }
+    lines(time, elev, type='l', col=rgb(0,0,1,0.5))
+}
 abline(h=c(0,180), v=hmaxelev, lty='dotted')
 axis(1, at=seq(0, 23, by=1), cex.axis=0.5)
 axis(2, at=seq(0, 315, by=45))
 legend("topleft", legend=c("Azim", "Elev"),
        col=c("red", "blue"), lty=1:1, cex=0.8)
-
-# Winter solstice
-time=seq(0,24,length.out=289)[1:288]
-maxelev=max(elevsolsinv[!is.na(elevsolsinv)])
-hmaxelev=time[which(elevsolsinv==maxelev)]
-plot(time, azimsolsinv, ylim=c(0,315), type='l',
-     main='Winter solstice Azimuth / Elevation',
-     xlab=paste0('Hour (max Elev=',maxelev,'deg at ',hmaxelev,'h)'),
-     ylab='Azimuth (deg) / Elevation (deg)',
-     col='red', xaxt='n', yaxt='n')
-lines(time, elevsolsinv, type='l', col='blue')
-abline(h=c(0,180), v=hmaxelev, lty='dotted')
-axis(1, at=seq(0, 23, by=1), cex.axis=0.5)
-axis(2, at=seq(0, 315, by=45))
-legend("topleft", legend=c("Azim", "Elev"),
-       col=c("red", "blue"), lty=1:1, cex=0.8)
-
-
-print(paste0("Max difference in sunrise angle: ",
-    min(azimsolsinv[!is.na(azimsolsinv)])-min(azimsolsver[!is.na(azimsolsver)]),
-    " deg"))
-
-print(paste0("Max difference in sunset angle: ",
-    max(azimsolsver[!is.na(azimsolsver)])-max(azimsolsinv[!is.na(azimsolsinv)]),
-    " deg"))
 
 
 # Daylight hours (from number of >0 5min slices)
@@ -167,28 +158,8 @@ axis(2, at=seq(0, 15, by=1), cex.axis=0.7)
 abline(v=c(NSOLSVER,NSOLSINV), lty='dotted')
 
 
-# Check Elevation for negative values
-# Conclusion: data is nor perfectly normalised -> quick approximation
-for (i in 1:(nrow(elev)-1)) {
-    nneg=0
-    npos=0
-    nzero=0
-    nnull=0
-    for (j in 1:ncol(elev)) {
-        if (!is.na(elev[i,j]) & (elev[i,j]>0)) npos=npos+1
-        if (!is.na(elev[i,j]) & (elev[i,j]<0)) nneg=nneg+1
-        if (!is.na(elev[i,j]) & (elev[i,j]==0)) nzero=nzero+1
-        if (is.na(elev[i,j])) nnull=nnull+1
-    }
-    if (1) {  #(nneg!=2) {
-        # print(paste0("Row ", i, ": npos=", npos, ", nneg=", nneg,
-        # ", nzero=", nzero,", nnull=", nnull,
-        # ". Total=", npos+nneg+nzero+nnull))
-        print(npos)
-    }
-}
 
-
+# SHADOW SIMULATIONS
 
 # Read structure
 SCALE=13  # px/m
