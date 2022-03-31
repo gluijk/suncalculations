@@ -15,11 +15,11 @@ elevazim=read.table("year2002_elev_azim_GMT+1_NoDST.csv",
                     header=T, sep=";", dec=".")
 
 
-solsver=elevazim[elevazim$DIA=='21/06/2022',]  # summer solstice
+solsver=elevazim[elevazim$DAY=='21/06/2022',]  # summer solstice
 solsver=solsver[,2:ncol(solsver)]  # keep azim/elev data
 NSOLSVER=as.integer(rownames(solsver))  # row 172
 
-solsinv=elevazim[elevazim$DIA=='21/12/2022',]  # winter solstice
+solsinv=elevazim[elevazim$DAY=='21/12/2022',]  # winter solstice
 solsinv=solsinv[,2:ncol(solsinv)]  # keep azim/elev data
 NSOLSINV=as.integer(rownames(solsinv))  # row 355
 
@@ -28,7 +28,7 @@ NSOLSINV=as.integer(rownames(solsinv))  # row 355
 # BASIC AZIMUTH/ELEVATION PLOTS
 
 # Plot curves for days 21 (21-jun=summer solstice, 21-dec=winter solstice)
-elevazimdays21=elevazim[substr(elevazim$DIA,1,2)=='21',]
+elevazimdays21=elevazim[substr(elevazim$DAY,1,2)=='21',]
 elevazimdays21=elevazimdays21[,2:ncol(elevazimdays21)]  # keep azim/elev data
 
 # CARTESIAN plot
