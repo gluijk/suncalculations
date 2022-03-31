@@ -11,7 +11,7 @@ library(plotly)
 deg2rad=function(deg) {deg*pi/180.0}
 
 # Elevation and azimuth per day in 2002 (5min sampling)
-elevazim=read.table("year2002_elev_azim.csv", header=T, sep=";", dec=".")  # CSV de Excel
+elevazim=read.table("year2002_elev_azim.csv", header=T, sep=";", dec=".")
 
 
 solsver=elevazim[elevazim$DIA=='21/06/2022',]  # summer solstice
@@ -108,18 +108,21 @@ elevsolsinv=elev[NSOLSINV,]
 
 # Max Azimuth differences
 print(paste0("Max difference in sunrise angle: ",
-             min(azimsolsinv[!is.na(azimsolsinv)])-min(azimsolsver[!is.na(azimsolsver)]),
-             " deg"))
+    min(azimsolsinv[!is.na(azimsolsinv)])-min(azimsolsver[!is.na(azimsolsver)]),
+    " deg"))
 
 print(paste0("Max difference in sunset angle: ",
-             max(azimsolsver[!is.na(azimsolsver)])-max(azimsolsinv[!is.na(azimsolsinv)]),
-             " deg"))
+    max(azimsolsver[!is.na(azimsolsver)])-max(azimsolsinv[!is.na(azimsolsinv)]),
+    " deg"))
 
 
 # Plot Azimuth and Elevation vs hour
 time=seq(0,24,length.out=289)[1:288]
 maxelev=max(elevsolsver[!is.na(elevsolsver)])
 hmaxelev=time[which(elevsolsver==maxelev)]
+minelev=max(elevsolsinv[!is.na(elevsolsinv)])
+hminelev=time[which(elevsolsinv==minelev)]
+
 for (i in 1:nrow(elevazimdays21)) {
     day21=elevazimdays21[i,]  # day 21 of the month
     azim=day21[col(day21)%%2==0]
@@ -127,7 +130,8 @@ for (i in 1:nrow(elevazimdays21)) {
     if (i==1) {
         plot(time, azim, ylim=c(0,315), type='l',
              main='Azimuth and elevation on 21th of the month vs hour',
-             xlab=paste0('Hour (max Elev=',maxelev,'deg at ',hmaxelev,'h)'),
+             xlab=paste0('Hour (max Elev=',maxelev,'deg, min Elev=',minelev,
+                         ' deg)'),
              ylab='Azimuth (deg) / Elevation (deg)',
              col=rgb(1,0,0,0.5), xaxt='n', yaxt='n')        
     } else {
@@ -135,7 +139,7 @@ for (i in 1:nrow(elevazimdays21)) {
     }
     lines(time, elev, type='l', col=rgb(0,0,1,0.5))
 }
-abline(h=c(0,180), v=hmaxelev, lty='dotted')
+abline(h=c(0,180,minelev,maxelev), v=hmaxelev, lty='dotted')
 axis(1, at=seq(0, 23, by=1), cex.axis=0.5)
 axis(2, at=seq(0, 315, by=45))
 legend("topleft", legend=c("Azim", "Elev"),
