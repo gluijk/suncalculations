@@ -35,7 +35,7 @@ elevazimdays21=elevazimdays21[,2:ncol(elevazimdays21)]  # keep azim/elev data
 # We define an empty polar plot and its layout
 fig=plot_ly(type='scatter', mode='lines')
 fig=fig %>% layout(
-    title='Azimuth and elevation on 21th of the month',
+    title='Azimuth and Elevation on 21th of the month',
     xaxis=list(
         range=c(0,360),
         tickvals=seq(0, 360, 45),
@@ -126,19 +126,19 @@ hminelev=time[which(elevsolsinv==minelev)]
 
 for (i in 1:nrow(elevazimdays21)) {
     day21=elevazimdays21[i,]  # day 21 of the month
-    azim=day21[col(day21)%%2==0]
-    elev=day21[col(day21)%%2==1]
+    azimtmp=day21[col(day21)%%2==0]
+    elevtmp=day21[col(day21)%%2==1]
     if (i==1) {
-        plot(time, azim, ylim=c(0,315), type='l',
-             main='Azimuth and elevation on 21th of the month vs hour',
+        plot(time, azimtmp, ylim=c(0,315), type='l',
+             main='Azimuth and Elevation on 21th of the month vs hour',
              xlab=paste0('Hour (max Elev=',maxelev,'deg, min Elev=',minelev,
                          ' deg)'),
              ylab='Azimuth (deg) / Elevation (deg)',
              col=rgb(1,0,0,0.5), xaxt='n', yaxt='n')        
     } else {
-        lines(time, azim, type='l', col=rgb(1,0,0,0.5)) 
+        lines(time, azimtmp, type='l', col=rgb(1,0,0,0.5)) 
     }
-    lines(time, elev, type='l', col=rgb(0,0,1,0.5))
+    lines(time, elevtmp, type='l', col=rgb(0,0,1,0.5))
 }
 abline(h=c(0,180,minelev,maxelev), v=hmaxelev, lty='dotted')
 axis(1, at=seq(0, 23, by=1), cex.axis=0.5)
@@ -153,11 +153,13 @@ elevtmp[is.na(elevtmp)]=0
 elevtmp[elevtmp<0]=0
 elevtmp[elevtmp>0]=1
 daylighthours=apply(elevtmp, 1, sum)*5/60  # count Elevation>0 slices
-plot(daylighthours, ylab=paste0('Daylight hours (max=', max(daylighthours),
-    'h, min=', min(daylighthours),'h)'), xlab='Day (1-365)',
-    main='Daylight hours',
-    xlim=c(0,364), ylim=c(0,15),
-    type='l', col='blue', xaxt='n', yaxt='n')
+smoothingSpline=smooth.spline(daylighthours, spar=0.35)
+plot(smoothingSpline,
+     ylab=paste0('Daylight hours (max=', max(daylighthours),
+        'h, min=', min(daylighthours),'h)'), xlab='Day (1-365)',
+     main='Daylight hours',
+     xlim=c(0,364), ylim=c(0,15),
+     type='l', col='blue', xaxt='n', yaxt='n')
 axis(1, at=seq(0, 365, by=30), cex.axis=0.7)
 axis(2, at=seq(0, 15, by=1), cex.axis=0.7)
 abline(v=c(NSOLSVER,NSOLSINV), lty='dotted')
