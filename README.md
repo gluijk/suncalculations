@@ -1,2 +1,2 @@
 # suncalculations
-Simulating 2D Sun shadow casting in R
+Doing some calculations about the Sun's position in R
