@@ -288,7 +288,7 @@ for (day in 1:365) {  # loop through year
 
 
 # Calculating living room insolation
-room_half=room  # we run the code twice with house.tif and house_half.tif
+room_half=room  # run the code twice with house.tif and house_half.tif
 plot(room, main='Living room average sunlight', xlab='Day (1-365)',
      ylim=c(0,max(room)), ylab='', type='l', lty='dotted', col='blue', xaxt='n')
 lines(room_half, col='red')
@@ -297,11 +297,15 @@ axis(1, at=seq(0, 365, by=30), cex.axis=0.7)
 legend("bottomright", legend=c("Donut", "Semidonut"),
        col=c("red", "blue"), lty=1:1, cex=0.8)
 
+print(paste0("Light loss because of round shape: ",
+    (room[NSOLSINV]-room_half[NSOLSINV])/room_half[NSOLSINV]*100,"%"))
+
 daymaxsun1=which(room==max(room[1:180]))  # First max -> day 50 (19-feb-22)
 daymaxsun2=which(room==max(room[181:365]))  # Second max -> day 294 (21-oct-22)
 
 dayminsun1=which(room==min(room[1:180]))  # First min -> day 127 (7-may-22)
 dayminsun2=which(room==min(room[181:365]))  # Second min -> day 217 (5-ago-22)
+
 
 
 
@@ -344,3 +348,17 @@ b[j]=a[i]
 
 a
 b
+
+
+iorg=which(img>0, arr.ind=TRUE)  # there is a roof
+j=iorg  # reset indexes
+j[,2]=j[,2]+round(dx)  # offset X (columns)
+j[,1]=j[,1]-round(dy)  # offset Y (rows)
+
+# Keep only offset coords falling into the array
+keep=j[,2]>=1 & j[,2]<=DIMX & j[,1]>=1 & j[,1]<=DIMY
+j=j[keep]
+dim(j)=c(length(j)/2,2) # restore 2D format
+
+# Subtract shadows
+imgoutacum[j]=imgoutacum[j]-ifelse(ANGLE,sin(deg2rad(elevdaytmp[k])),1)
