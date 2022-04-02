@@ -123,7 +123,6 @@ maxelev=max(elevsolsver[!is.na(elevsolsver)])
 hmaxelev=time[which(elevsolsver==maxelev)]
 minelev=max(elevsolsinv[!is.na(elevsolsinv)])
 hminelev=time[which(elevsolsinv==minelev)]
-
 for (i in 1:nrow(elevazimdays21)) {
     day21=elevazimdays21[i,]  # day 21 of the month
     azimtmp=day21[col(day21)%%2==0]
@@ -140,7 +139,7 @@ for (i in 1:nrow(elevazimdays21)) {
     }
     lines(time, elevtmp, type='l', col=rgb(0,0,1,0.5))
 }
-abline(h=c(0,180,minelev,maxelev), v=hmaxelev, lty='dotted')
+abline(h=c(0,180), v=hmaxelev, lty='dotted')
 axis(1, at=seq(0, 23, by=1), cex.axis=0.5)
 axis(2, at=seq(0, 315, by=45))
 legend("topleft", legend=c("Azim", "Elev"),
@@ -172,7 +171,7 @@ abline(v=c(NSOLSVER,NSOLSINV), lty='dotted')
 SCALE=13  # px/m
 HEIGHT=3  # 3m
 ANGLE=1  # ANGLE=1 scales light power by Elevation, ANGLE=0 counts light hours
-GAMMA=2.2  # plotting gamma lift
+# GAMMA=2.2  # plotting gamma lift
 GAMMA=1  # plotting gamma lift
 
 img=1-readTIFF("house.tif", native=FALSE, convert=FALSE)
@@ -203,19 +202,20 @@ for (m in 1:12) {
 
 # LOOP THROUGH YEAR
 
-# dia=172, 180 tramos 5min (15h) de contribución
-# dia=355, 108 tramos 5min (9h)  de contribución
+# Solstices:
+# Summer: day=172, 180 tramos 5min (15h) de contribución
+# Winter: day=355, 108 tramos 5min (9h)  de contribución
 
-room=array(0,365)
+room=array(0,365)  # living room
 iorg=which(img>0, arr.ind=TRUE)  # there is a roof
 
 # Calculating light contributions on each day
 iMAX=array(0,c(2,365))
-for (dia in 1:365) {
-    elevday=elev[dia,]
+for (day in 1:365) {
+    elevday=elev[day,]
     elevdaytmp=elevday[!is.na(elevday) & elevday>0]
-    iMAX[1,dia]=length(elevdaytmp)  # number of contributions
-    iMAX[2,dia]=sum(sin(deg2rad(elevdaytmp)))  # sum of contributions
+    iMAX[1,day]=length(elevdaytmp)  # number of contributions
+    iMAX[2,day]=sum(sin(deg2rad(elevdaytmp)))  # sum of contributions
 }
 
 if (ANGLE) {
@@ -225,18 +225,18 @@ if (ANGLE) {
 }
 
 
-for (dia in 1:365) {  # loop through year
-    azimday=azim[dia,]
-    elevday=elev[dia,]
+for (day in 1:365) {  # loop through year
+    azimday=azim[day,]
+    elevday=elev[day,]
 
     azimdaytmp=azimday[!is.na(azimday) & elevday>0]
     elevdaytmp=elevday[!is.na(elevday) & elevday>0]
     
     # Accumulated light on day
     if (ANGLE) {
-        imgoutacum=img*0+iMAX[2,dia]  # sum of contributions on day
+        imgoutacum=img*0+iMAX[2,day]  # sum of contributions on day
     } else {
-        imgoutacum=img*0+iMAX[1,dia]  # number of contributions on day
+        imgoutacum=img*0+iMAX[1,day]  # number of contributions on day
     }
     
     for (k in 1:length(azimdaytmp)) {  # loop through day (all 5min slices)
@@ -256,44 +256,52 @@ for (dia in 1:365) {  # loop through year
         # Subtract shadows
         imgoutacum[j]=imgoutacum[j]-ifelse(ANGLE,sin(deg2rad(elevdaytmp[k])),1)
         
-        # Shadows animation
-        if (dia==-1) {
+        # Shadows per hour animation
+        if (day==-1) {
             imgout=img*0
             imgout[j]=img[iorg]
             imgout[icontour]=1-imgout[icontour]
-            writeTIFF(1-imgout, paste0("houseshadow_",
+            writeTIFF(1-imgout, paste0("shadowhour_",
                 ifelse(k<10,"00",ifelse(k<100,"0","")),k,".tif"),
                 bits.per.sample=8, compression="LZW")
         }
     }
     
-    # room[dia]=mean(imgoutacum[(450/2-50):(450/2-20),(512/2-15):(512/2+15)])
+    # Living room
+    room[day]=mean(imgoutacum[(450/2-50):(450/2-20),(512/2-15):(512/2+15)])
 
     imgoutacum=imgoutacum/MAXNORM
-    imgoutacum[icontour]=0  #(imgoutacum[icontour]+0.5)%%1
+    imgoutacum[icontour]=0
     
-    # Add month
-    if (dia==-1) {
-        m=as.integer(dia*12/367)+1  # month to which day belongs
+    # Print month
+    if (day>0) {
+        m=as.integer(day*12/367)+1  # month to which day belongs
         imes=which(month[,,m] < imgoutacum)
         imgoutacum[imes]=month[,,m][imes]
     }
 
-    writeTIFF(imgoutacum^(1/GAMMA), paste0("houseshadowdia_",
-            ifelse(dia<10,"00",ifelse(dia<100,"0","")),dia,".tif"),
+    writeTIFF(imgoutacum^(1/GAMMA), paste0("shadowday_",
+            ifelse(day<10,"00",ifelse(day<100,"0","")),day,".tif"),
             bits.per.sample=16, compression="LZW")
-    print(dia)
+    print(day)
 }
 
 
-# Daylight hours (from number of >0 5min slices)
+# Calculating living room insolation
+room_half=room  # we run the code twice with house.tif and house_half.tif
 plot(room, main='Living room average sunlight', xlab='Day (1-365)',
      ylim=c(0,max(room)), ylab='', type='l', lty='dotted', col='blue', xaxt='n')
-lines(room_circle, col='red')
+lines(room_half, col='red')
+abline(v=c(NSOLSVER,NSOLSINV), lty='dotted')
 axis(1, at=seq(0, 365, by=30), cex.axis=0.7)
 legend("bottomright", legend=c("Donut", "Semidonut"),
        col=c("red", "blue"), lty=1:1, cex=0.8)
 
+daymaxsun1=which(room==max(room[1:180]))  # First max -> day 50 (19-feb-22)
+daymaxsun2=which(room==max(room[181:365]))  # Second max -> day 294 (21-oct-22)
+
+dayminsun1=which(room==min(room[1:180]))  # First min -> day 127 (7-may-22)
+dayminsun2=which(room==min(room[181:365]))  # Second min -> day 217 (5-ago-22)
 
 
 
