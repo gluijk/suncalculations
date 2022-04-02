@@ -206,7 +206,7 @@ for (m in 1:12) {
 # Summer: day=172, 180 tramos 5min (15h) de contribución
 # Winter: day=355, 108 tramos 5min (9h)  de contribución
 
-room=array(0,365)  # living room
+room=array(0,365)  # living room insolation
 iorg=which(img>0, arr.ind=TRUE)  # there is a roof
 
 # Calculating light contributions on each day
