@@ -274,7 +274,7 @@ for (day in 1:365) {  # loop through year
     imgoutacum[icontour]=0
     
     # Print month
-    if (day>0) {
+    if (day==-1) {
         m=as.integer(day*12/367)+1  # month to which day belongs
         imes=which(month[,,m] < imgoutacum)
         imgoutacum[imes]=month[,,m][imes]
