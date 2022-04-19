@@ -321,7 +321,7 @@ dim(elevdays21)=dim(azimdays21)
 
 
 # Pinhole cameras focal lengths
-f=2*(6.5/2)  # 12cm pinhole camera
+f=2*(6.5/2)  # 6.5cm pinhole camera
 Rlata=f/2  # can camera (beer can diameter=6.5 cm)
 Rsemilata=f  # half can camera
 
