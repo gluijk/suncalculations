@@ -324,7 +324,7 @@ dim(azimtmp)=c(nrow(elevazimtmp), ncol(elevazimtmp)/2)
 dim(elevtmp)=dim(azimtmp)
 
 # Flat pinhole camera
-png(file="pinholes.png", width=600, height=800)
+png(file="pinhole1.png", width=512, height=640)
 for (i in 1:nrow(azimtmp)) {
     x0=f*tan(deg2rad(azimtmp[i,]-180))
     y0=f*tan(deg2rad(elevtmp[i,]))/cos(deg2rad(azimtmp[i,]-180))
@@ -336,17 +336,17 @@ for (i in 1:nrow(azimtmp)) {
     if (i==1) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
-             main='Pinhole cameras', xlab='X (cm)', ylab='Y (cm)',
-             col=rgb(0,1,0,0.08))        
+             main='Flat pinhole camera', xlab='X (cm)', ylab='Y (cm)',
+             col=rgb(0,0,1,0.08))        
     } else {
-        lines(x0, y0, type='l', col=rgb(0,1,0,0.08)) 
+        lines(x0, y0, type='l', col=rgb(0,0,1,0.08)) 
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
 dev.off()
 
 # Can pinhole camera
-png(file="pinhole2.png", width=600, height=800)
+png(file="pinhole2.png", width=512, height=640)
 for (i in 1:nrow(azimtmp)) {
     x0=2*Rlata*deg2rad(azimtmp[i,]-180)
     y0=2*Rlata*tan(deg2rad(elevtmp[i,]))*cos(deg2rad(azimtmp[i,]-180))
@@ -359,16 +359,16 @@ for (i in 1:nrow(azimtmp)) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
              main='Can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
-             col=rgb(1,0,0,0.08))        
+             col=rgb(0,0,1,0.08))        
     } else {
-        lines(x0, y0, type='l', col=rgb(1,0,0,0.08)) 
+        lines(x0, y0, type='l', col=rgb(0,0,1,0.08)) 
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
 dev.off()
 
 # Half can pinhole camera
-png(file="pinhole3.png", width=600, height=800)
+png(file="pinhole3.png", width=512, height=640)
 for (i in 1:nrow(azimtmp)) {
     x0=Rsemilata*deg2rad(azimtmp[i,]-180)
     y0=Rsemilata*tan(deg2rad(elevtmp[i,]))
@@ -399,7 +399,7 @@ elevana=elevtmp[col(elevtmp)%%12==0]
 dim(azimana)=c(365, 24)
 dim(elevana)=c(365, 24)
 
-png(file="pinhole_analemma1.png", width=600, height=800)
+png(file="pinhole_analemma1.png", width=512, height=640)
 for (i in 1:24) {
     x0=f*tan(deg2rad(azimana[,i]-180))
     y0=f*tan(deg2rad(elevana[,i]))/cos(deg2rad(azimana[,i]-180))
@@ -412,15 +412,15 @@ for (i in 1:24) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
              main='Flat pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
-             col=rgb(1,0,0,1))         
+             col=rgb(0,0,1,1))         
     } else {
-        lines(x0, y0, type='l', col=rgb(1,0,0,1)) 
+        lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
 dev.off()
 
-png(file="pinhole_analemma2.png", width=600, height=800)
+png(file="pinhole_analemma2.png", width=512, height=640)
 for (i in 1:24) {
     x0=2*Rlata*deg2rad(azimana[,i]-180)
     y0=2*Rlata*tan(deg2rad(elevana[,i]))*cos(deg2rad(azimana[,i]-180))
@@ -433,15 +433,15 @@ for (i in 1:24) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
              main='Can pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
-             col=rgb(1,0,0,1))         
+             col=rgb(0,0,1,1))         
     } else {
-        lines(x0, y0, type='l', col=rgb(1,0,0,1)) 
+        lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
 dev.off()
 
-png(file="pinhole_analemma3.png", width=600, height=800)
+png(file="pinhole_analemma3.png", width=512, height=640)
 for (i in 1:24) {
     x0=Rsemilata*deg2rad(azimana[,i]-180)
     y0=Rsemilata*tan(deg2rad(elevana[,i]))
@@ -454,9 +454,9 @@ for (i in 1:24) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
              main='Half can pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
-             col=rgb(1,0,0,1))         
+             col=rgb(0,0,1,1))         
     } else {
-        lines(x0, y0, type='l', col=rgb(1,0,0,1)) 
+        lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
