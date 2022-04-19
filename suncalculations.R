@@ -98,7 +98,7 @@ fig
 elevazimdata=as.matrix(elevazim[,2:ncol(elevazim)])  # keep azim/elev data
 azim=elevazimdata[col(elevazimdata)%%2==0]
 elev=elevazimdata[col(elevazimdata)%%2==1]
-dim(azim)=c(nrow(elevazimdata), ncol(elevazimdata)/2) # restitute matrix format
+dim(azim)=c(nrow(elevazimdata), ncol(elevazimdata)/2) # restore matrix format
 dim(elev)=dim(azim)
 
 # Max sunrise/sunset angle differences
@@ -309,11 +309,101 @@ dayminsun2=which(room==min(room[181:365]))  # Second min -> day 217 (5-ago-22)
 
 
 
+# PLOT SUN TRAJECTORIES FOR 3 PINHOLE CAMERAS
 
-# DIBUJAR TRAYECTORIAS DEL SOL EN FOTOGRAFÍA
-# - Curvas diarias
-# - Forma elíptica (dato: radio)
-# - Analema (posición a la misma hora a lo largo del año)
+azimdays21=elevazimdays21[col(elevazimdays21)%%2==0]
+elevdays21=elevazimdays21[col(elevazimdays21)%%2==1]
+
+# restore matrix format
+dim(azimdays21)=c(nrow(elevazimdays21), ncol(elevazimdays21)/2)
+dim(elevdays21)=dim(azimdays21)
+
+
+
+# Pinhole cameras focal lengths
+f=2*(6.5/2)  # 12cm pinhole camera
+Rlata=f/2  # can camera (beer can diameter=6.5 cm)
+Rsemilata=f  # half can camera
+
+# Prepare Azim/Elev data
+elevazimtmp=elevazim[1:365,2:ncol(elevazim)]
+azimtmp=elevazimtmp[col(elevazimtmp)%%2==0]
+elevtmp=elevazimtmp[col(elevazimtmp)%%2==1]
+dim(azimtmp)=c(nrow(elevazimtmp), ncol(elevazimtmp)/2)
+dim(elevtmp)=dim(azimtmp)
+
+# Flat pinhole camera
+png(file="pinhole1.png", width=600, height=800)
+for (i in 1:nrow(azimtmp)) {
+    x0=f*tan(deg2rad(azimtmp[i,]-180.0))
+    y0=f*tan(deg2rad(elevtmp[i,]))/cos(deg2rad(azimtmp[i,]-180.0))
+    MAXX=f*deg2rad(90)
+    x0[x0>=MAXX]=NA
+    x0[x0<=-MAXX]=NA
+    y0[y0<0]=NA
+        
+    if (i==1) {
+        plot(x0, y0, asp=1,
+             xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
+             main='Flat pinhole camera', xlab='X (cm)', ylab='Y (cm)',
+             col=rgb(1,0,0,0.05))        
+    } else {
+        lines(x0, y0, type='l', col=rgb(1,0,0,0.05)) 
+    }
+}
+abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
+dev.off()
+
+# Can pinhole camera
+png(file="pinhole2.png", width=600, height=800)
+for (i in 1:nrow(azimtmp)) {
+    x0=2*Rlata*deg2rad(azimtmp[i,]-180.0)
+    y0=2*Rlata*tan(deg2rad(elevtmp[i,]))*cos(deg2rad(azimtmp[i,]-180.0))
+    MAXX=2*Rlata*deg2rad(90)
+    x0[x0>=MAXX]=NA
+    x0[x0<=-MAXX]=NA
+    y0[y0<0]=NA
+    
+    if (i==1) {
+        plot(x0, y0, asp=1,
+             xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
+             main='Can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
+             col=rgb(0,0,1,0.05))        
+    } else {
+        lines(x0, y0, type='l', col=rgb(0,0,1,0.05)) 
+    }
+}
+abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
+dev.off()
+
+# Half can pinhole camera
+png(file="pinhole3.png", width=600, height=800)
+for (i in 1:nrow(azimtmp)) {
+    x0=Rsemilata*deg2rad(azimtmp[i,]-180.0)
+    y0=Rsemilata*tan(deg2rad(elevtmp[i,]))
+    MAXX=Rsemilata*deg2rad(90)
+    x0[x0>=MAXX]=NA
+    x0[x0<=-MAXX]=NA
+    y0[y0<0]=NA
+
+    if (i==1) {
+        plot(x0, y0, asp=1,
+             xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
+             main='Half can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
+             col=rgb(1,0,0,0.05))         
+    } else {
+        lines(x0, y0, type='l', col=rgb(1,0,0,0.05)) 
+    }
+}
+abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
+dev.off()
+
+
+# Analema (posición a la misma hora a lo largo del año)
+
+
+
+
 
 
 ########################################################################
@@ -340,7 +430,7 @@ j[,1]=j[,1]-dy  # offset Y (rows)
 keep=j[,2]>=1 & j[,2]<=DIMX & j[,1]>=1 & j[,1]<=DIMY
 j=j[keep]
 i=i[keep]
-dim(i)=c(length(i)/2,2) # restitute 2D format
+dim(i)=c(length(i)/2,2) # restore 2D format
 dim(j)=dim(i)
 
 # Dump data already offset
@@ -348,17 +438,3 @@ b[j]=a[i]
 
 a
 b
-
-
-iorg=which(img>0, arr.ind=TRUE)  # there is a roof
-j=iorg  # reset indexes
-j[,2]=j[,2]+round(dx)  # offset X (columns)
-j[,1]=j[,1]-round(dy)  # offset Y (rows)
-
-# Keep only offset coords falling into the array
-keep=j[,2]>=1 & j[,2]<=DIMX & j[,1]>=1 & j[,1]<=DIMY
-j=j[keep]
-dim(j)=c(length(j)/2,2) # restore 2D format
-
-# Subtract shadows
-imgoutacum[j]=imgoutacum[j]-ifelse(ANGLE,sin(deg2rad(elevdaytmp[k])),1)
