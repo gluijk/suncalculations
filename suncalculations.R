@@ -1,6 +1,7 @@
 # Sun calculations with R
 # www.overfitting.net
 # https://www.overfitting.net/2022/03/localizacion-del-sol-por-dia-y-hora-con.html
+# https://www.overfitting.net/2022/04/proyeccion-de-sombras-solares-con-r.html
 
 
 library(tiff)
