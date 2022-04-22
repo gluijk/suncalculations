@@ -6,7 +6,7 @@
 # Degrees to radians
 deg2rad=function(deg) {deg*pi/180.0}
 
-# Elevation and azimuth per day in 2002 (5min sampling) from:
+# Elevation and azimuth per day in 2022 (5min sampling) from:
 # https://www.sunearthtools.com/dp/tools/pos_sun.php#annual
 elevazim=read.table("year2022_elev_azim_GMT+1_NoDST.csv",
                     header=T, sep=";", dec=".")
