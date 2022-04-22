@@ -10,7 +10,7 @@ library(plotly)
 # Degrees to radians
 deg2rad=function(deg) {deg*pi/180.0}
 
-# Elevation and azimuth per day in 2002 (5min sampling) from:
+# Elevation and azimuth per day in 2022 (5min sampling) from:
 # https://www.sunearthtools.com/dp/tools/pos_sun.php#annual
 elevazim=read.table("year2022_elev_azim_GMT+1_NoDST.csv",
                     header=T, sep=";", dec=".")
@@ -204,8 +204,8 @@ for (m in 1:12) {
 # LOOP THROUGH YEAR
 
 # Solstices:
-# Summer: day=172, 180 tramos 5min (15h) de contribución
-# Winter: day=355, 108 tramos 5min (9h)  de contribución
+# Summer: day=172, 180 tramos 5min (15h) de contribuciÃ³n
+# Winter: day=355, 108 tramos 5min (9h)  de contribuciÃ³n
 
 room=array(0,365)  # living room insolation
 iorg=which(img>0, arr.ind=TRUE)  # there is a roof
@@ -315,7 +315,7 @@ dayminsun2=which(room==min(room[181:365]))  # Second min -> day 217 (5-ago-22)
 ########################################################################
 # OFFSET
 
-# Cómo desplazar una matriz por un offset de forma vectorizada
+# CÃ³mo desplazar una matriz por un offset de forma vectorizada
 a=array(0, c(7,9))
 DIMX=ncol(a)
 DIMY=nrow(a)
