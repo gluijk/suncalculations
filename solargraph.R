@@ -4,7 +4,7 @@
 
 
 # Degrees to radians
-deg2rad=function(deg) {deg*pi/180.0}
+deg2rad=function(deg) {deg*pi/180}
 
 # Elevation and azimuth per day in 2022 (5min sampling) from:
 # https://www.sunearthtools.com/dp/tools/pos_sun.php#annual
