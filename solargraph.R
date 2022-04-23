@@ -127,7 +127,7 @@ for (i in 1:24) {
     if (i==1) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
-             main='Flat pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
+             main='Flat pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,1))         
     } else {
         lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
@@ -148,7 +148,7 @@ for (i in 1:24) {
     if (i==1) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
-             main='Can pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
+             main='Can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,1))         
     } else {
         lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
@@ -169,7 +169,7 @@ for (i in 1:24) {
     if (i==1) {
         plot(x0, y0, asp=1,
              xlim=c(-MAXX,MAXX), ylim=c(0,25), type='l',
-             main='Half can pinhole camera analemmas', xlab='X (cm)', ylab='Y (cm)',
+             main='Half can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,1))         
     } else {
         lines(x0, y0, type='l', col=rgb(0,0,1,1)) 
