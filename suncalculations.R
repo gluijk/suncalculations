@@ -7,6 +7,7 @@
 library(tiff)
 library(plotly)
 
+
 # Degrees to radians
 deg2rad=function(deg) {deg*pi/180.0}
 
@@ -15,13 +16,11 @@ deg2rad=function(deg) {deg*pi/180.0}
 elevazim=read.table("year2022_elev_azim_GMT+1_NoDST.csv",
                     header=T, sep=";", dec=".")
 
-
+# Calculate solstices
 solsver=elevazim[elevazim$DAY=='21/06/2022',]  # summer solstice
-solsver=solsver[,2:ncol(solsver)]  # keep azim/elev data
 NSOLSVER=as.integer(rownames(solsver))  # row 172
 
 solsinv=elevazim[elevazim$DAY=='21/12/2022',]  # winter solstice
-solsinv=solsinv[,2:ncol(solsinv)]  # keep azim/elev data
 NSOLSINV=as.integer(rownames(solsinv))  # row 355
 
 
@@ -204,8 +203,8 @@ for (m in 1:12) {
 # LOOP THROUGH YEAR
 
 # Solstices:
-# Summer: day=172, 180 tramos 5min (15h) de contribuciÃ³n
-# Winter: day=355, 108 tramos 5min (9h)  de contribuciÃ³n
+# Summer: day=172, 180 tramos 5min (15h) de contribución
+# Winter: day=355, 108 tramos 5min (9h)  de contribución
 
 room=array(0,365)  # living room insolation
 iorg=which(img>0, arr.ind=TRUE)  # there is a roof
@@ -315,7 +314,7 @@ dayminsun2=which(room==min(room[181:365]))  # Second min -> day 217 (5-ago-22)
 ########################################################################
 # OFFSET
 
-# CÃ³mo desplazar una matriz por un offset de forma vectorizada
+# Cómo desplazar una matriz por un offset de forma vectorizada
 a=array(0, c(7,9))
 DIMX=ncol(a)
 DIMY=nrow(a)

@@ -11,6 +11,13 @@ deg2rad=function(deg) {deg*pi/180.0}
 elevazim=read.table("year2022_elev_azim_GMT+1_NoDST.csv",
                     header=T, sep=";", dec=".")
 
+# Calculate equinoxes
+equinoxspr=elevazim[elevazim$DAY=='20/03/2022',]  # spring equinox
+NEQUINOXSPR=as.integer(rownames(equinoxspr))  # row 79
+
+equinoxaut=elevazim[elevazim$DAY=='23/09/2022',]  # autumn equinox
+NEQUINOXAUT=as.integer(rownames(equinoxaut))  # row 266
+
 
 # PLOT SUN TRAJECTORIES FOR 3 PINHOLE CAMERAS
 
@@ -42,7 +49,9 @@ for (i in 1:nrow(azimtmp)) {
              main='Flat pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,0.08))        
     } else {
-        lines(x0, y0, type='l', col=rgb(0,0,1,0.08)) 
+        lines(x0, y0, type='l',
+            col=ifelse((i==NEQUINOXSPR | i==NEQUINOXAUT), rgb(1,0,0,1),
+            rgb(0,0,1,0.08)))  
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
@@ -64,7 +73,9 @@ for (i in 1:nrow(azimtmp)) {
              main='Can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,0.08))        
     } else {
-        lines(x0, y0, type='l', col=rgb(0,0,1,0.08)) 
+        lines(x0, y0, type='l',
+            col=ifelse((i==NEQUINOXSPR | i==NEQUINOXAUT), rgb(1,0,0,1),
+            rgb(0,0,1,0.08)))   
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
@@ -86,7 +97,9 @@ for (i in 1:nrow(azimtmp)) {
              main='Half can pinhole camera', xlab='X (cm)', ylab='Y (cm)',
              col=rgb(0,0,1,0.08))         
     } else {
-        lines(x0, y0, type='l', col=rgb(0,0,1,0.08)) 
+        lines(x0, y0, type='l',
+            col=ifelse((i==NEQUINOXSPR | i==NEQUINOXAUT), rgb(1,0,0,1),
+            rgb(0,0,1,0.08)))
     }
 }
 abline(h=0, v=c(-MAXX,0,MAXX), lty='dotted')
