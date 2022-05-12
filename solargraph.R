@@ -109,7 +109,7 @@ dev.off()
 
 # DRAW ANALEMMAS
 
-# Keep samples at exact hours
+# Keep samples at exact hours (60min / 5min/sample = 12 -> 1h = 12 samples )
 azimana=azimtmp[col(azimtmp)%%12==0]
 elevana=elevtmp[col(elevtmp)%%12==0]
 dim(azimana)=c(365, 24)
